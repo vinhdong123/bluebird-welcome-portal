@@ -29,17 +29,6 @@ export const Route = createFileRoute("/")({
 type Mode = "login" | "register";
 type AccountType = "personal" | "business";
 
-const copy: Record<AccountType, Record<Mode, { title: string; subtitle: string }>> = {
-  personal: {
-    login: { title: "Chào mừng trở lại 👋", subtitle: "Đăng nhập để tiếp tục hành trình của bạn." },
-    register: { title: "Tạo tài khoản mới", subtitle: "Chỉ mất chưa đến một phút để bắt đầu." },
-  },
-  business: {
-    login: { title: "Cổng doanh nghiệp", subtitle: "Đăng nhập để quản lý đội ngũ và hoạt động của công ty." },
-    register: { title: "Đăng ký doanh nghiệp", subtitle: "Mở tài khoản cho công ty của bạn chỉ trong một phút." },
-  },
-};
-
 const panelCopy: Record<AccountType, { title: string; text: string; stat: string; statSub: string }> = {
   personal: {
     title: "Làm việc thông minh hơn, mỗi ngày.",
@@ -82,7 +71,6 @@ function AuthPage() {
   const [mode, setMode] = useState<Mode>("login");
   const [accountType, setAccountType] = useState<AccountType>("personal");
   const panel = panelCopy[accountType];
-  const text = copy[accountType][mode];
 
   return (
     <main className="min-h-screen bg-background bg-gradient-page">
@@ -208,10 +196,9 @@ function AuthPage() {
             </div>
 
             <div key={`${accountType}-${mode}`} className="animate-fade-up">
-              <header className="mb-7 space-y-2">
-                <h1 className="text-3xl font-bold tracking-tight text-foreground">{text.title}</h1>
-                <p className="text-muted-foreground">{text.subtitle}</p>
-              </header>
+              <h1 className="sr-only">
+                {mode === "login" ? "Đăng nhập" : "Đăng ký"} {accountType === "business" ? "doanh nghiệp" : "cá nhân"}
+              </h1>
 
               {accountType === "personal" ? (
                 mode === "login" ? (
