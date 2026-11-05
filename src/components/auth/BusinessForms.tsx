@@ -192,7 +192,7 @@ export function BusinessRegisterForm({ onSwitch }: { onSwitch: () => void }) {
       noValidate
     >
       {/* Stepper */}
-      <ol className="mb-2 flex items-center gap-3">
+      <ol className="!mb-6 flex items-center gap-3">
         {steps.map((label, i) => (
           <li key={label} className="flex flex-1 items-center gap-2.5">
             <span
