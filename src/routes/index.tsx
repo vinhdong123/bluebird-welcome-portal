@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { ShieldCheck, Sparkles, Zap } from "lucide-react";
+import { Building2, ShieldCheck, Sparkles, UserRound, Zap } from "lucide-react";
 import authVisual from "@/assets/auth-visual.jpg";
 import { LoginForm, RegisterForm } from "@/components/auth/AuthForms";
+import { BusinessLoginForm, BusinessRegisterForm } from "@/components/auth/BusinessForms";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
@@ -11,7 +12,7 @@ export const Route = createFileRoute("/")({
       { title: "Đăng nhập & Đăng ký | Nimbus" },
       {
         name: "description",
-        content: "Đăng nhập hoặc tạo tài khoản Nimbus mới chỉ trong vài giây với giao diện hiện đại, an toàn.",
+        content: "Đăng nhập hoặc tạo tài khoản Nimbus cho cá nhân và doanh nghiệp chỉ trong vài giây.",
       },
       { property: "og:title", content: "Đăng nhập & Đăng ký | Nimbus" },
       {
@@ -26,11 +27,38 @@ export const Route = createFileRoute("/")({
 });
 
 type Mode = "login" | "register";
+type AccountType = "personal" | "business";
 
-const copy: Record<Mode, { title: string; subtitle: string }> = {
-  login: { title: "Chào mừng trở lại 👋", subtitle: "Đăng nhập để tiếp tục hành trình của bạn." },
-  register: { title: "Tạo tài khoản mới", subtitle: "Chỉ mất chưa đến một phút để bắt đầu." },
+const copy: Record<AccountType, Record<Mode, { title: string; subtitle: string }>> = {
+  personal: {
+    login: { title: "Chào mừng trở lại 👋", subtitle: "Đăng nhập để tiếp tục hành trình của bạn." },
+    register: { title: "Tạo tài khoản mới", subtitle: "Chỉ mất chưa đến một phút để bắt đầu." },
+  },
+  business: {
+    login: { title: "Cổng doanh nghiệp", subtitle: "Đăng nhập để quản lý đội ngũ và hoạt động của công ty." },
+    register: { title: "Đăng ký doanh nghiệp", subtitle: "Mở tài khoản cho công ty của bạn chỉ với 2 bước." },
+  },
 };
+
+const panelCopy: Record<AccountType, { title: string; text: string; stat: string; statSub: string }> = {
+  personal: {
+    title: "Làm việc thông minh hơn, mỗi ngày.",
+    text: "Kết nối, quản lý và phát triển cùng hàng nghìn người dùng đang tin tưởng Nimbus.",
+    stat: "12.000+ người dùng",
+    statSub: "đã tham gia trong tháng này",
+  },
+  business: {
+    title: "Nền tảng vận hành cho doanh nghiệp hiện đại.",
+    text: "Quản lý nhân sự, phân quyền và dữ liệu công ty tập trung tại một nơi, an toàn và minh bạch.",
+    stat: "850+ doanh nghiệp",
+    statSub: "đang vận hành trên Nimbus",
+  },
+};
+
+const accountTypes = [
+  { value: "personal", label: "Cá nhân", icon: UserRound },
+  { value: "business", label: "Doanh nghiệp", icon: Building2 },
+] as const;
 
 function Logo({ light = false }: { light?: boolean }) {
   return (
@@ -52,6 +80,9 @@ function Logo({ light = false }: { light?: boolean }) {
 
 function AuthPage() {
   const [mode, setMode] = useState<Mode>("login");
+  const [accountType, setAccountType] = useState<AccountType>("personal");
+  const panel = panelCopy[accountType];
+  const text = copy[accountType][mode];
 
   return (
     <main className="min-h-screen bg-background bg-gradient-page">
@@ -70,13 +101,11 @@ function AuthPage() {
           <div className="relative flex h-full flex-col justify-between p-10 xl:p-12">
             <Logo light />
 
-            <div className="max-w-md space-y-6">
+            <div key={accountType} className="max-w-md animate-fade-up space-y-6">
               <h2 className="text-4xl font-bold leading-tight tracking-tight text-primary-foreground xl:text-5xl">
-                Làm việc thông minh hơn, mỗi ngày.
+                {panel.title}
               </h2>
-              <p className="text-base leading-relaxed text-primary-foreground/80">
-                Kết nối, quản lý và phát triển cùng hàng nghìn người dùng đang tin tưởng Nimbus.
-              </p>
+              <p className="text-base leading-relaxed text-primary-foreground/80">{panel.text}</p>
 
               <div className="animate-float-slow rounded-2xl bg-primary-foreground/12 p-5 ring-1 ring-primary-foreground/20 backdrop-blur-xl">
                 <div className="flex items-center gap-4">
@@ -94,8 +123,8 @@ function AuthPage() {
                     ))}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-primary-foreground">12.000+ người dùng</p>
-                    <p className="text-xs text-primary-foreground/70">đã tham gia trong tháng này</p>
+                    <p className="text-sm font-semibold text-primary-foreground">{panel.stat}</p>
+                    <p className="text-xs text-primary-foreground/70">{panel.statSub}</p>
                   </div>
                 </div>
               </div>
@@ -117,6 +146,40 @@ function AuthPage() {
           <div className="w-full max-w-[440px]">
             <div className="mb-10 lg:hidden">
               <Logo />
+            </div>
+
+            {/* Account type */}
+            <div className="mb-4 grid grid-cols-2 gap-3" role="radiogroup" aria-label="Loại tài khoản">
+              {accountTypes.map(({ value, label, icon: Icon }) => {
+                const active = accountType === value;
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => setAccountType(value)}
+                    className={cn(
+                      "flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all",
+                      active
+                        ? "border-primary bg-accent shadow-elegant"
+                        : "border-border bg-card hover:border-primary/40",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "flex size-9 items-center justify-center rounded-lg transition-colors",
+                        active ? "bg-gradient-primary text-primary-foreground" : "bg-muted text-muted-foreground",
+                      )}
+                    >
+                      <Icon className="size-[18px]" />
+                    </span>
+                    <span className={cn("text-sm font-semibold", active ? "text-primary" : "text-foreground")}>
+                      {label}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Segmented toggle */}
@@ -144,16 +207,22 @@ function AuthPage() {
               ))}
             </div>
 
-            <div key={mode} className="animate-fade-up">
+            <div key={`${accountType}-${mode}`} className="animate-fade-up">
               <header className="mb-7 space-y-2">
-                <h1 className="text-3xl font-bold tracking-tight text-foreground">{copy[mode].title}</h1>
-                <p className="text-muted-foreground">{copy[mode].subtitle}</p>
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">{text.title}</h1>
+                <p className="text-muted-foreground">{text.subtitle}</p>
               </header>
 
-              {mode === "login" ? (
-                <LoginForm onSwitch={() => setMode("register")} />
+              {accountType === "personal" ? (
+                mode === "login" ? (
+                  <LoginForm onSwitch={() => setMode("register")} />
+                ) : (
+                  <RegisterForm onSwitch={() => setMode("login")} />
+                )
+              ) : mode === "login" ? (
+                <BusinessLoginForm onSwitch={() => setMode("register")} />
               ) : (
-                <RegisterForm onSwitch={() => setMode("login")} />
+                <BusinessRegisterForm onSwitch={() => setMode("login")} />
               )}
             </div>
           </div>
