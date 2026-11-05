@@ -36,7 +36,7 @@ const copy: Record<AccountType, Record<Mode, { title: string; subtitle: string }
   },
   business: {
     login: { title: "Cổng doanh nghiệp", subtitle: "Đăng nhập để quản lý đội ngũ và hoạt động của công ty." },
-    register: { title: "Đăng ký doanh nghiệp", subtitle: "Mở tài khoản cho công ty của bạn chỉ với 2 bước." },
+    register: { title: "Đăng ký doanh nghiệp", subtitle: "Mở tài khoản cho công ty của bạn chỉ trong một phút." },
   },
 };
 
