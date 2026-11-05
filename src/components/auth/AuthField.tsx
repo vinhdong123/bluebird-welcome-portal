@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 interface AuthFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   icon: ReactNode;
-  error?: string;
-  trailing?: ReactNode;
+  error?: string | undefined;
+  trailing?: ReactNode | undefined;
 }
 
 export const AuthField = forwardRef<HTMLInputElement, AuthFieldProps>(
